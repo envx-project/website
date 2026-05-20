@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono:
+    ui-monospace, "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas,
+    monospace;
+
+  --color-background: oklch(0.145 0 0);
+  --color-foreground: oklch(0.985 0 0);
+
+  --color-card: oklch(0.18 0 0);
+  --color-card-foreground: oklch(0.985 0 0);
+
+  --color-popover: oklch(0.18 0 0);
+  --color-popover-foreground: oklch(0.985 0 0);
+
+  --color-primary: oklch(0.985 0 0);
+  --color-primary-foreground: oklch(0.18 0 0);
+
+  --color-secondary: oklch(0.25 0 0);
+  --color-secondary-foreground: oklch(0.985 0 0);
+
+  --color-muted: oklch(0.22 0 0);
+  --color-muted-foreground: oklch(0.65 0 0);
+
+  --color-accent: oklch(0.25 0 0);
+  --color-accent-foreground: oklch(0.985 0 0);
+
+  --color-destructive: oklch(0.577 0.245 27.325);
+  --color-destructive-foreground: oklch(0.985 0 0);
+
+  --color-border: oklch(0.27 0 0);
+  --color-input: oklch(0.27 0 0);
+  --color-ring: oklch(0.6 0 0);
+
+  --color-emerald: oklch(0.72 0.18 155);
+  --color-amber: oklch(0.79 0.17 75);
+  --color-rose: oklch(0.7 0.2 15);
+  --color-sky: oklch(0.75 0.13 230);
+
+  --radius-lg: 0.625rem;
+  --radius-md: calc(var(--radius-lg) - 2px);
+  --radius-sm: calc(var(--radius-lg) - 4px);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+  }
+
+  ::selection {
+    background: oklch(0.55 0.15 155 / 0.4);
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, oklch(1 0 0 / 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(1 0 0 / 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(
+      ellipse 60% 50% at 50% 0%,
+      black 40%,
+      transparent 100%
+    );
+  }
+
+  .noise {
+    position: relative;
+  }
+  .noise::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
