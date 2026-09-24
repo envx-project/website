@@ -78,8 +78,10 @@ envx whoami`}</Code>
         <H2 id="switch">Using a different server</H2>
         <Code>{`envx config set sdk_url https://envx.example.com`}</Code>
         <P>
-          This changes where future requests go. It does not migrate remote
-          projects, recipients, friends, or messages. Follow the{" "}
+          This changes where future requests go. It does not migrate account
+          identities, remote projects, recipients, friends, or messages. A
+          registered key keeps its existing UUID; upload refuses to replace an
+          identity that cannot authenticate on the new server. Follow the{" "}
           <a href="/docs/self-host#point-cli">registration guidance</a> for that
           server and verify identities there. Local state is scoped to the API,
           account UUID, and signing key.

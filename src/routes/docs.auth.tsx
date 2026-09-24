@@ -77,8 +77,10 @@ envx auth --debug`}</Code>
           step.
         </P>
         <P>
-          Use <code>envx upload</code> when registering your existing public
-          key. Your project access belongs to the server-side account, so
+          Use <code>envx upload</code> to register a key generated with{" "}
+          <code>--no-upload</code>. If an account UUID already exists, upload
+          verifies that identity and refuses to replace it when authentication
+          fails. Your project access belongs to the server-side account, so
           preserve its identity and your key backups.
         </P>
       </section>

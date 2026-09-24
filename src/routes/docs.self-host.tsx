@@ -137,12 +137,16 @@ docker run --rm --env DATABASE_URL --env PORT=3000 \\
         <H2 id="point-cli">Point the CLI at your server</H2>
         <Code>{`envx config set sdk_url https://envx.example.com`}</Code>
         <P>
-          For a new profile, run <code>envx gen</code>. For an existing key not
-          registered on this server, run <code>envx upload</code>. Then create
-          or link a project. Changing <code>sdk_url</code> does not copy
+          For a new profile, set the server before running <code>envx gen</code>
+          . If you generated a key with <code>--no-upload</code> and it has no
+          account UUID yet, register it with <code>envx upload</code>. Then
+          create or link a project. Changing <code>sdk_url</code> does not copy
           projects, membership, or encrypted variables from another server.
           Local operational state is scoped to the server, account UUID, and
-          signing key.
+          signing key. An existing account UUID is not automatically remapped to
+          another server: upload refuses to replace it if authentication fails.
+          Preserve the original profile and resolve account migration before
+          switching a registered key.
         </P>
       </section>
       <section className="space-y-4">
