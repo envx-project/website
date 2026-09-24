@@ -19,15 +19,14 @@ const GROUPS = [
         desc: "Generate a new GPG key and store it under ~/.config/envx/keys.",
       },
       {
-        cmd: "envx import <file>",
-        desc: "Import an ASCII-armored key from a file.",
+        cmd: "envx import pubkey <file>",
+        desc: "Import an armored public key; does not replace your primary private key.",
       },
       {
-        cmd: "envx export <fingerprint>",
-        desc: "Export a public or secret key.",
+        cmd: "envx export [--secret-key]",
+        desc: "Export the primary public key, or its encrypted secret key.",
       },
       { cmd: "envx upload", desc: "Upload your public key to the server." },
-      { cmd: "envx list-keys", desc: "List every key in your local config." },
       {
         cmd: "envx whoami",
         desc: "Print your primary fingerprint and account UUID.",
@@ -41,7 +40,10 @@ const GROUPS = [
         cmd: "envx link",
         desc: "Link the current working directory to a project.",
       },
-      { cmd: "envx unlink", desc: "Remove the link for the current directory." },
+      {
+        cmd: "envx unlink",
+        desc: "Remove the link for the current directory.",
+      },
       { cmd: "envx list-projects", desc: "List projects you can access." },
       {
         cmd: "envx project new",
@@ -52,16 +54,16 @@ const GROUPS = [
         desc: "Add a user to the project; re-encrypts every variable to include them.",
       },
       {
-        cmd: "envx project remove-user <uuid>",
+        cmd: "envx project remove-user --user-id <uuid>",
         desc: "Remove a user; re-encrypts variables to the remaining recipients.",
       },
       {
-        cmd: "envx project rename <name>",
+        cmd: "envx project rename --name <name>",
         desc: "Rename the active project.",
       },
       {
-        cmd: "envx invite",
-        desc: "Generate / accept project invites.",
+        cmd: "envx invite create",
+        desc: "Generate a project invite; redeem it with envx invite accept <code>.",
       },
     ],
   },
@@ -69,8 +71,8 @@ const GROUPS = [
     title: "Variables",
     commands: [
       {
-        cmd: "envx set <NAME>",
-        desc: "Set (or update) a variable interactively.",
+        cmd: "envx set KEY=VALUE [KEY=VALUE...]",
+        desc: "Set variables from arguments or KEY=VALUE lines on stdin; --yes approves overwrites.",
       },
       { cmd: "envx unset <NAME>", desc: "Delete a variable." },
       {
@@ -78,7 +80,7 @@ const GROUPS = [
         desc: "Print all decrypted variables for the current env.",
       },
       {
-        cmd: "envx get key <NAME>",
+        cmd: "envx get variable --key <NAME>",
         desc: "Get a single variable's decrypted value.",
       },
     ],
@@ -94,11 +96,44 @@ const GROUPS = [
     ],
   },
   {
+    title: "Friends & messages",
+    commands: [
+      {
+        cmd: "envx friend-link [user-uuid]",
+        desc: "Create a friend link; --expires sets its lifetime.",
+      },
+      {
+        cmd: "envx add-friend <code> --alias <name>",
+        desc: "Accept a full friend code and pin its identity locally.",
+      },
+      {
+        cmd: "envx friends --json",
+        desc: "List friends; aliases and accepted key pins are local.",
+      },
+      {
+        cmd: "envx send <friend> [--file <path>]",
+        desc: "Send signed encrypted text; use --stdin for a pipe or --env for KEY=VALUE lines.",
+      },
+      {
+        cmd: "envx inbox --json",
+        desc: "List sent and received message metadata.",
+      },
+      {
+        cmd: "envx read <message-id>",
+        desc: "Verify and decrypt a message; --output writes a new file.",
+      },
+      {
+        cmd: "envx import message <id> --project-id <uuid>",
+        desc: "Preview and import an encrypted variable bundle; --dry-run makes no project changes.",
+      },
+    ],
+  },
+  {
     title: "Config & misc",
     commands: [
       {
         cmd: "envx config get",
-        desc: "Read a config field (lists all when path omitted).",
+        desc: "Read a config field; omit the path to select interactively or list fields on piped output.",
       },
       {
         cmd: "envx config set <path> <value>",
@@ -125,7 +160,7 @@ const GROUPS = [
         cmd: "envx update",
         desc: "Re-run the install script to self-update (POSIX only).",
       },
-      { cmd: "envx version", desc: "Print version + build SHA." },
+      { cmd: "envx version", desc: "Print the CLI version and author." },
     ],
   },
 ];
@@ -134,13 +169,14 @@ function CliRef() {
   return (
     <DocsPage
       title="CLI reference"
-      description="Every command, grouped by what you're trying to do."
+      description="Common commands, grouped by task. Use --help for every option in your installed version."
     >
       <section className="space-y-4">
-        <H2 id="global">Global flags</H2>
-        <Code lang="bash">{`--silent     suppress non-essential output
--h, --help   print help (also works per-subcommand)
--V, --version`}</Code>
+        <H2 id="global">Installed-version help</H2>
+        <Code lang="bash">{`envx --help
+envx --version
+envx project --help
+envx send --help`}</Code>
       </section>
 
       {GROUPS.map((g) => (

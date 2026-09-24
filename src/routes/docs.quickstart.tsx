@@ -1,134 +1,127 @@
 import { createFileRoute } from "@tanstack/react-router";
-
-import { Callout, Code, DocsPage, H2, Ol, P, Ul } from "@/components/docs/page";
-
+import { Callout, Code, DocsPage, H2, P, Ul } from "@/components/docs/page";
 export const Route = createFileRoute("/docs/quickstart")({
   component: Quickstart,
 });
-
 function Quickstart() {
   return (
     <DocsPage
       title="Quickstart"
-      description="From zero to running a process with encrypted env vars in under five minutes."
+      description="Install envx, create a project, and run a process with encrypted environment variables."
     >
       <section className="space-y-4">
         <H2 id="install">1. Install the CLI</H2>
-        <P>macOS, Linux, or WSL:</P>
-        <Code lang="bash">{`curl -fsSL get.envx.sh | bash`}</Code>
+        <P>On macOS, Linux, or WSL:</P>
+        <Code>{`curl -fsSL https://get.envx.sh | bash
+envx --version`}</Code>
         <P>
-          On Windows, grab the binary from{" "}
+          On Windows, download the appropriate binary from{" "}
           <a
             href="https://github.com/envx-project/cli/releases/latest"
             target="_blank"
             rel="noreferrer"
           >
-            the latest release
+            GitHub releases
           </a>{" "}
-          and add it to <code>PATH</code>. See the{" "}
+          and follow the{" "}
           <a
             href="https://github.com/envx-project/cli/blob/main/windows-installation.md"
             target="_blank"
             rel="noreferrer"
           >
-            Windows guide
-          </a>{" "}
-          for details.
+            Windows installation guide
+          </a>
+          .
         </P>
-        <Callout variant="info" title="Verify">
-          Run <code>envx version</code>. You should see a fancy banner with the
-          version and build SHA.
+        <Callout variant="info" title="Upgrading an existing profile?">
+          Keep using your current key and commands. Local operational state
+          migrates to SQLite automatically. You do not need to generate a new
+          key or re-upload it. See{" "}
+          <a href="/docs/local-state">local state and upgrades</a>.
         </Callout>
       </section>
-
       <section className="space-y-4">
-        <H2 id="key">2. Get a key</H2>
+        <H2 id="key">2. Generate your first key</H2>
         <P>
-          envx uses GPG for asymmetric encryption. You can bring your own key or
-          generate a fresh one:
+          For a new profile, generate a passphrase-protected OpenPGP key. The
+          prompts collect your username and passphrase, and envx registers the
+          public key with the configured API.
         </P>
-        <Code lang="bash">{`# generate a new GPG key and save it under ~/.config/envx/keys
-envx gen
-
-# OR import an existing armored key
-envx import ./my-key.asc
-
-# tell the server about your public key
-envx upload`}</Code>
+        <Code>{`envx gen
+envx whoami`}</Code>
+        <P>
+          The default API is <code>https://api.envx.sh</code>. To use your own
+          server, set <code>sdk_url</code> before generating the key. If you
+          used <code>envx gen --no-upload</code>, register it later with{" "}
+          <code>envx upload</code>.
+        </P>
       </section>
-
       <section className="space-y-4">
-        <H2 id="link">3. Link a project</H2>
+        <H2 id="project">3. Create or link a project</H2>
+        <Code>{`cd ~/work/api
+envx project new --name api-development`}</Code>
         <P>
-          Linking a directory tells envx which project to use when you&apos;re
-          inside it. The link is stored in your global config at{" "}
-          <code>~/.config/envx/config.json</code> &mdash; nothing is written to
-          the project directory itself.
+          A new project links to the current directory unless it already has a
+          project link. To use an existing project instead, run{" "}
+          <code>envx link</code> and select it. Links apply in child directories
+          and are stored locally; no file is added to your checkout.
         </P>
-        <Code lang="bash">{`cd ~/work/api
-envx link`}</Code>
-        <P>You&apos;ll be prompted to pick a project from your existing ones.</P>
-        <Callout variant="info" title="Need a new project?">
-          Run <code>envx project new</code> first. envx does not model
-          environments &mdash; if you want a <code>staging</code>/
-          <code>production</code> split, create one project per environment.
+        <Callout variant="info">
+          Projects are flat sets of variables. For development, staging, and
+          production, create a separate project for each environment.
         </Callout>
       </section>
-
       <section className="space-y-4">
-        <H2 id="set">4. Set some variables</H2>
-        <Code lang="bash">{`envx set DATABASE_URL
-# ? value › postgres://...
-
-envx set API_KEY
-# ? value › sk_live_...`}</Code>
+        <H2 id="set">4. Set variables</H2>
         <P>
-          Each value is encrypted to every authorized recipient key on the
-          project before being uploaded.
+          Pass <code>KEY=VALUE</code> pairs or pipe an existing environment
+          file. These examples use a dummy local URL; avoid putting real
+          credentials into shell history.
+        </P>
+        <Code>{`envx set DATABASE_URL=postgres://localhost:5432/api
+# Or read KEY=VALUE lines from an existing file:
+envx set < .env`}</Code>
+        <P>
+          When replacing an existing variable through a pipe, use{" "}
+          <code>envx set --yes &lt; .env</code> to explicitly approve the
+          overwrite. Names and values are encrypted to the project&apos;s
+          server-provided recipient list before upload.
         </P>
       </section>
-
       <section className="space-y-4">
-        <H2 id="run">5. Run something with them</H2>
-        <Code lang="bash">{`# wrap any process with decrypted env vars
-envx run -- bun dev
+        <H2 id="run">5. Run your process</H2>
+        <Code>{`envx run -- bun dev
 envx run -- cargo run --bin api
-
-# or drop into a subshell with vars set
-envx shell
-
-# or just dump them
-envx variables`}</Code>
-        <Callout variant="good" title="That's it">
-          You now have end-to-end encrypted secrets management. No daemon. No
-          plaintext on the wire. No SaaS lock-in.
-        </Callout>
+# Or open a shell with the same variables:
+envx shell`}</Code>
+        <P>
+          <code>envx variables</code> displays decrypted values. Use it only
+          where it is safe to show secrets.
+        </P>
       </section>
-
       <section className="space-y-4">
         <H2 id="next">Next steps</H2>
         <Ul>
           <li>
-            Configure a <code>primary_key_command</code> so envx unlocks your
-            key via <code>op read</code> automatically.
+            <a href="/docs/sharing">
+              Add a friend and send a signed encrypted message
+            </a>
+            .
           </li>
           <li>
-            Self-host the API for your team: see <code>/docs/self-host</code>.
+            <a href="/docs/security">
+              Understand project trust and message verification
+            </a>
+            .
           </li>
-          <li>Read the full CLI reference for every command and flag.</li>
+          <li>
+            <a href="/docs/self-host">Run your own API</a>.
+          </li>
+          <li>
+            <a href="/docs/cli-reference">Browse command examples</a>, or run{" "}
+            <code>envx &lt;command&gt; --help</code> for the installed version.
+          </li>
         </Ul>
-        <Ol>
-          <li>
-            <code>envx config get</code> — print your full config
-          </li>
-          <li>
-            <code>envx list-projects</code> — list projects you have access to
-          </li>
-          <li>
-            <code>envx project list-users</code> — see which users can decrypt
-            the active project
-          </li>
-        </Ol>
       </section>
     </DocsPage>
   );

@@ -9,6 +9,16 @@ export const Route = createFileRoute("/docs/")({
 
 const CARDS = [
   {
+    to: "/docs/sharing" as const,
+    title: "Friends and messages",
+    body: "Pin a friend and send signed encrypted text or variables.",
+  },
+  {
+    to: "/docs/local-state" as const,
+    title: "Local state and upgrades",
+    body: "Automatic SQLite migration, settings, and backups.",
+  },
+  {
     to: "/docs/quickstart" as const,
     title: "Quickstart",
     body: "Install the CLI, generate a key, run your first encrypted command.",
@@ -31,7 +41,7 @@ const CARDS = [
   {
     to: "/docs/cli-reference" as const,
     title: "CLI reference",
-    body: "Every command, every flag, copy-pasteable.",
+    body: "Common commands and links to installed-version help.",
   },
   {
     to: "/docs/auth" as const,
@@ -49,7 +59,7 @@ function DocsHome() {
   return (
     <DocsPage
       title="Documentation"
-      description="Two installs, one CLI, three commands. Pick where you want to start."
+      description="Set up a project, share with a friend, or run your own API."
     >
       <div>
         <H2>Browse</H2>
@@ -75,10 +85,11 @@ function DocsHome() {
         <P>
           <strong>envx</strong> is an open-source environment variable manager
           that encrypts every secret on your machine with your GPG key before it
-          leaves. The server is a dumb store of opaque blobs &mdash; it cannot
-          read your secrets even if it wanted to. Pair it with <code>op</code>{" "}
-          or any password command, link it to a project directory, and you have{" "}
-          <code>dotenv</code> ergonomics with proper cryptography.
+          leaves. The API stores ciphertext and supplies project membership.
+          Standalone messages additionally verify signatures against locally
+          pinned friends. Pair it with <code>op</code> or any password command,
+          link it to a project directory, and you have <code>dotenv</code>{" "}
+          ergonomics with proper cryptography.
         </P>
       </div>
     </DocsPage>

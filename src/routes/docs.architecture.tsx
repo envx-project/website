@@ -1,6 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { Callout, Code, DocsPage, H2, H3, Ol, P, Ul } from "@/components/docs/page";
+import {
+  Callout,
+  Code,
+  DocsPage,
+  H2,
+  H3,
+  Ol,
+  P,
+  Ul,
+} from "@/components/docs/page";
 
 export const Route = createFileRoute("/docs/architecture")({
   component: Architecture,
@@ -10,7 +19,7 @@ function Architecture() {
   return (
     <DocsPage
       title="Architecture"
-      description="A precise tour of how envx moves secrets between machines without ever revealing them to the server."
+      description="How project encryption, signed messages, and local state fit together."
     >
       <section className="space-y-4">
         <H2 id="pieces">The pieces</H2>
@@ -24,12 +33,14 @@ function Architecture() {
           <li>
             <strong>API</strong> &mdash; a thin Rust + axum service backed by
             Postgres. Stores opaque ciphertext blobs, public keys, and project
-            metadata. Has no decryption capability.
+            metadata. The project workflow trusts its membership and public-key
+            records.
           </li>
           <li>
-            <strong>Postgres</strong> &mdash; standard. Holds three logical
-            tables: <code>projects</code>, <code>users</code> (which carry
-            public keys), and <code>variables</code> (ciphertext blobs).
+            <strong>Postgres</strong> stores identities, projects, membership,
+            encrypted variables, invitations, friend relationships, messages,
+            and operational metadata. Local CLI state is stored separately in
+            SQLite.
           </li>
         </Ul>
       </section>
@@ -50,7 +61,8 @@ function Architecture() {
           </li>
           <li>
             CLI POSTs an array of ciphertext blobs to the API alongside the
-            project ID. The API never sees the variable name in plaintext.
+            project ID. The request contains encrypted variable names and
+            values.
           </li>
           <li>
             API writes a row per blob to <code>variables</code>. No decryption
@@ -60,8 +72,9 @@ function Architecture() {
         <Callout variant="info" title="What the API sees">
           The request body is literally{" "}
           <code>{`{ project_id: "<uuid>", variables: ["<rpgp blob>", "<rpgp blob>"] }`}</code>
-          . The server cannot tell which row is <code>DATABASE_URL</code> and
-          which is <code>STRIPE_SECRET</code> &mdash; both names are encrypted.
+          . Both variable names and values are encrypted. Membership and
+          recipient keys still come from the API, so a malicious server can
+          target future writes by changing that list.
         </Callout>
       </section>
 
@@ -69,8 +82,8 @@ function Architecture() {
         <H2 id="flow-get">Reading a variable</H2>
         <Ol>
           <li>
-            CLI looks up the current working directory in your local config at{" "}
-            <code>~/.config/envx/config.json</code> to find the linked
+            CLI looks up the current working directory in local SQLite state at{" "}
+            <code>~/.config/envx/state.sqlite</code> to find the linked
             <code> project_id</code>.
           </li>
           <li>
@@ -94,9 +107,9 @@ function Architecture() {
         <H2 id="recipients">Recipients &amp; rotation</H2>
         <P>
           A &quot;recipient&quot; on a project is a user whose public key is
-          included when encrypting every variable on it. Adding a teammate
-          means adding their user account to the project and re-encrypting
-          every variable to the expanded recipient set.
+          included when encrypting every variable on it. Adding a teammate means
+          adding their user account to the project and re-encrypting every
+          variable to the expanded recipient set.
         </P>
         <H3 id="add">Adding a user to a project</H3>
         <Code lang="bash">{`envx project add-user <user-uuid>
@@ -127,10 +140,10 @@ function Architecture() {
         <H2 id="link-file">How linking works</H2>
         <P>
           When you <code>envx link</code> a directory, envx records the
-          association in your <em>global</em> config at{" "}
-          <code>~/.config/envx/config.json</code>, under a{" "}
-          <code>projects</code> array of{" "}
-          <code>{`{ project_id, path }`}</code> entries.
+          association in <code>~/.config/envx/state.sqlite</code>, scoped to the
+          API, account UUID, and signing key. Child directories inherit the
+          link. Human settings remain in <code>config.json</code>; existing
+          project links migrate automatically.
         </P>
         <P>
           envx <strong>does not</strong> write a <code>.envx</code> file or any
@@ -145,13 +158,20 @@ function Architecture() {
         <H2 id="threat">Threat model summary</H2>
         <Ul>
           <li>
-            <strong>API compromise:</strong> attacker gets ciphertext blobs and
-            users&apos; public keys. Cannot decrypt without a recipient private
-            key. Variable names are inside the ciphertext, so the attacker
-            doesn&apos;t even learn what kinds of secrets a project holds.
+            <strong>API compromise:</strong> a malicious server can alter the
+            recipient keys used for future project writes. Existing project
+            ciphertext is unsigned, so decryption does not prove its author.
+            Friend pins do not change this legacy project protocol.
           </li>
           <li>
-            <strong>Postgres dump:</strong> same as above.
+            <strong>Postgres dump:</strong> exposes ciphertext, public
+            identities, and relationship/usage metadata. Variable names and
+            values are inside encrypted payloads.
+          </li>
+          <li>
+            <strong>Standalone messages:</strong> signatures, signed metadata,
+            and locally pinned sender keys are verified before plaintext is
+            released. See <a href="/docs/sharing">friends and messages</a>.
           </li>
           <li>
             <strong>Stolen laptop:</strong> attacker has your private key under{" "}
@@ -159,9 +179,12 @@ function Architecture() {
             project, rotate the underlying secrets, and re-issue keys.
           </li>
           <li>
-            <strong>Malicious CLI binary:</strong> verify the install script
-            checksum, or build from source with{" "}
-            <code>cargo install --git https://github.com/envx-project/cli envx</code>.
+            <strong>Malicious CLI binary:</strong> review the installation
+            source and release provenance, or build from source with{" "}
+            <code>
+              cargo install --git https://github.com/envx-project/cli envx
+            </code>
+            .
           </li>
         </Ul>
       </section>

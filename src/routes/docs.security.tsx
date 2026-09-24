@@ -1,98 +1,126 @@
 import { createFileRoute } from "@tanstack/react-router";
-
 import { Callout, DocsPage, H2, P, Ul } from "@/components/docs/page";
-
-export const Route = createFileRoute("/docs/security")({
-  component: Security,
-});
-
+export const Route = createFileRoute("/docs/security")({ component: Security });
 function Security() {
   return (
     <DocsPage
       title="Security model"
-      description="What envx defends against, what it doesn't, and where the trust boundaries live."
+      description="Encryption, identity verification, and the trust each workflow requires."
     >
       <section className="space-y-4">
-        <H2 id="goals">Design goals</H2>
-        <Ul>
-          <li>
-            <strong>The server cannot read secrets.</strong> Not us, not your
-            cloud provider, not a malicious admin with database access.
-          </li>
-          <li>
-            <strong>Plaintext never crosses the network.</strong> Encryption
-            happens on your machine before any HTTP request.
-          </li>
-          <li>
-            <strong>Standard cryptography.</strong> GPG/OpenPGP. No home-rolled
-            primitives.
-          </li>
-          <li>
-            <strong>Auditable.</strong> ~6k LOC of Rust. You can read every line
-            that handles a secret in an afternoon.
-          </li>
-        </Ul>
+        <H2 id="projects">Project variables</H2>
+        <P>
+          The CLI encrypts each variable name and value together using OpenPGP
+          before uploading it. Private keys and key passphrases stay on your
+          machine. A database dump contains ciphertext and metadata, not
+          plaintext variable names or values.
+        </P>
+        <Callout
+          variant="warn"
+          title="Project membership is trusted from the server"
+        >
+          The CLI obtains project membership and recipient public keys from the
+          API. A malicious server can substitute or add a key and receive
+          secrets on a subsequent write or re-encryption. Existing project
+          ciphertext is unsigned: decryption does not authenticate who wrote a
+          variable. Local friend pins do not change this project protocol.
+        </Callout>
       </section>
-
       <section className="space-y-4">
-        <H2 id="boundaries">Trust boundaries</H2>
-        <Ul>
-          <li>
-            <strong>Trusted:</strong> your machine, your GPG private key, the
-            <code> primary_key_command</code> binary (e.g. <code>op</code>).
-          </li>
-          <li>
-            <strong>Untrusted:</strong> the envx API, the database, the network,
-            and any logs or backups the host produces.
-          </li>
-        </Ul>
+        <H2 id="messages">Signed messages between friends</H2>
+        <P>
+          Standalone messages are signed by the sender and encrypted to the
+          recipient. Before releasing plaintext, the CLI verifies the signature
+          and message metadata against the sender&apos;s locally pinned
+          identity. A changed key requires explicit fingerprint verification; a
+          matching server username is not sufficient.
+        </P>
+        <P>
+          Exchange friend links through a channel where you already know the
+          person. The full link carries the trust information; its short
+          memorable label is not a fingerprint. Pins and aliases are local to
+          the current machine and account. See{" "}
+          <a href="/docs/sharing">friends and messages</a> for the verification
+          steps.
+        </P>
+        <P>
+          The server can still withhold, delete, delay, or replay stored data. A
+          recipient can retain plaintext or ciphertext after reading. Expiry,
+          deletion, and removing a friend cannot revoke a copy already received.
+        </P>
       </section>
-
       <section className="space-y-4">
-        <H2 id="non-goals">Non-goals</H2>
+        <H2 id="metadata">What the server can see</H2>
         <Ul>
           <li>
-            <strong>Anonymity.</strong> The server knows which keys belong to
-            which projects. It can tell that a request happened, who made it,
-            and what variable name was set &mdash; just not the value.
+            Public keys, account identifiers, usernames, project names, and
+            membership.
           </li>
           <li>
-            <strong>Protecting against a malicious CLI.</strong> If you run a
-            tampered binary, all bets are off. Install from source or verify the
-            install script.
+            Request timing, IP addresses, ciphertext sizes, and variable
+            identifiers.
           </li>
           <li>
-            <strong>Defending against your own teammates.</strong> Recipients on
-            a project can decrypt every variable on it. envx does not yet do
-            per-variable ACLs.
+            Friend relationships and message sender, recipient, timestamps,
+            expiry, and delivery metadata.
           </li>
         </Ul>
+        <P>
+          Variable names live inside the encrypted payload. Message contents are
+          encrypted too. Metadata can still reveal relationships and usage
+          patterns; envx does not provide anonymity.
+        </P>
       </section>
-
+      <section className="space-y-4">
+        <H2 id="local">Your machine and recovery</H2>
+        <Ul>
+          <li>
+            Trust the CLI binary, your operating system, and any{" "}
+            <code>primary_key_command</code> used to unlock a key.
+          </li>
+          <li>
+            Decrypted values are available to the process you run and to anyone
+            you deliberately share them with.
+          </li>
+          <li>
+            SQLite stores local operational state. It is not an encryption
+            layer; cached secret payloads remain OpenPGP encrypted.
+          </li>
+          <li>
+            After a key leak, remove that identity from projects and rotate the
+            underlying credentials. Re-encryption cannot invalidate downloaded
+            copies.
+          </li>
+        </Ul>
+        <P>
+          Use HTTPS for the API and installer. Back up your key files and local
+          state using the <a href="/docs/local-state">recovery guidance</a>.
+        </P>
+      </section>
       <section className="space-y-4">
         <H2 id="report">Reporting issues</H2>
         <P>
-          Found a vulnerability? Open a private security advisory on the{" "}
+          Report vulnerabilities privately through the{" "}
           <a
             href="https://github.com/envx-project/cli/security/advisories"
             target="_blank"
             rel="noreferrer"
           >
-            CLI repo
+            CLI repository
           </a>{" "}
-          or the{" "}
+          or{" "}
           <a
             href="https://github.com/envx-project/api/security/advisories"
             target="_blank"
             rel="noreferrer"
           >
-            API repo
+            API repository
           </a>
-          . We&apos;ll triage within a couple of days.
+          .
         </P>
         <Callout variant="warn" title="Alpha software">
-          envx is pre-1.0. Treat it accordingly: don&apos;t use it for the
-          nuclear launch codes yet.
+          Review the trust model and recovery process before relying on envx for
+          production secrets.
         </Callout>
       </section>
     </DocsPage>

@@ -33,7 +33,7 @@ const SECTIONS: { title: string; rows: Row[] }[] = [
     rows: [
       {
         feature: "Client-side E2E encryption",
-        note: "Server cannot read plaintext.",
+        note: "envx encrypts locally; project recipient keys are supplied by its API.",
         vals: {
           envx: true,
           Doppler: false,
@@ -259,7 +259,10 @@ function Compare() {
           When envx is the right call
         </h2>
         <ul className="mt-4 space-y-2 text-sm text-foreground/85">
-          <li>• You want zero plaintext on a third-party server, full stop.</li>
+          <li>
+            • You want client-side encryption and understand the project
+            recipient trust model.
+          </li>
           <li>• You already have a GPG workflow (or want one).</li>
           <li>• You prefer a single Rust binary over an agent + daemon.</li>
           <li>

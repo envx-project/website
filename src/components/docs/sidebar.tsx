@@ -7,6 +7,8 @@ const SECTIONS = [
       { to: "/docs", label: "Overview" },
       { to: "/docs/quickstart", label: "Quickstart" },
       { to: "/docs/cli-reference", label: "CLI reference" },
+      { to: "/docs/sharing", label: "Friends and messages" },
+      { to: "/docs/local-state", label: "Local state and upgrades" },
     ],
   },
   {

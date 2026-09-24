@@ -7,7 +7,7 @@ const TABS = [
   {
     id: "unix",
     label: "macOS / Linux",
-    cmd: "curl -fsSL get.envx.sh | bash",
+    cmd: "curl -fsSL https://get.envx.sh | bash",
   },
   {
     id: "cargo",

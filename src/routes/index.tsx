@@ -54,8 +54,8 @@ function Hero() {
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground text-pretty">
               <span className="font-mono text-foreground">envx</span> is an
-              open-source secrets manager backed by GPG. The server never sees
-              plaintext. Self-host it in five minutes, or use the hosted
+              open-source secrets manager backed by GPG. Project variables are
+              encrypted before upload. Self-host the API or use the hosted
               version.
             </p>
 
@@ -135,13 +135,13 @@ function Hero() {
 const FEATURES = [
   {
     icon: ShieldCheck,
-    title: "Zero-knowledge by design",
-    body: "Vars are encrypted on your machine with your GPG key before they ever leave. The server is a dumb store of opaque blobs.",
+    title: "Encrypted before upload",
+    body: "Variable names and values are encrypted locally. Projects trust server-provided recipients; standalone messages verify signed content against local friend pins.",
   },
   {
     icon: KeyRound,
     title: "GPG-native key management",
-    body: "Bring your existing GPG key or generate one with envx gen. Pair it with op or any password command for unlocked-by-1Password ergonomics.",
+    body: "Generate a key with envx gen and keep using it across upgrades. Unlock it through the OS keyring, op, or another password command.",
   },
   {
     icon: TerminalIcon,
@@ -202,19 +202,19 @@ function HowItWorks() {
       n: "01",
       title: "Generate a key",
       cmd: "envx gen",
-      out: "→ created GPG key 4A11...C9B3",
+      out: "Your key is generated and registered",
     },
     {
       n: "02",
       title: "Link a project",
       cmd: "envx link",
-      out: "→ linked ~/work/api → project api/production",
+      out: "Choose an existing project",
     },
     {
       n: "03",
-      title: "Set & run",
+      title: "Run with your variables",
       cmd: "envx run -- bun start",
-      out: "→ injected 14 decrypted vars",
+      out: "Your process receives decrypted variables",
     },
   ];
 
