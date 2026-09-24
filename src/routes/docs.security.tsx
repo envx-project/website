@@ -44,6 +44,15 @@ function Security() {
           steps.
         </P>
         <P>
+          Establishing the first pin still relies on the API&apos;s account
+          directory and redemption rules. The server issues the link token and
+          enforces who may redeem it first, including any target restriction. A
+          signed redemption receipt proves possession of the presented private
+          key; it does not establish the intended person&apos;s identity
+          independently of a malicious API. Compare full fingerprints through a
+          trusted channel when you need that assurance.
+        </P>
+        <P>
           The server can still withhold, delete, delay, or replay stored data. A
           recipient can retain plaintext or ciphertext after reading. Expiry,
           deletion, and removing a friend cannot revoke a copy already received.

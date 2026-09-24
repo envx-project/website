@@ -44,7 +44,7 @@ function Hero() {
               className="mb-5 gap-2 border-border/60 font-mono"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-emerald" />
-              v2.13.0 · alpha
+              v2.14.0 · alpha
             </Badge>
             <h1 className="font-mono text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
               Your env vars,{" "}

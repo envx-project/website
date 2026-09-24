@@ -26,10 +26,12 @@ envx friends --json`}</Code>
           <code>envx friend-link &lt;user-uuid&gt;</code>.
         </P>
         <P>
-          On the creator&apos;s machine, a signed redemption receipt for a
-          locally generated link establishes the other person&apos;s key. An
-          unrelated server result or a fresh device does not automatically
-          establish trust.
+          For a link created on this machine, the CLI can pin the
+          redeemer&apos;s presented key after checking a signed receipt. The
+          receipt proves control of that private key, not that its holder is the
+          person you intended. Initial redemption still trusts the API&apos;s
+          account directory and enforcement of the first redeemer and any target
+          restriction.
         </P>
         <Code>{`envx friend-link --list --json
 envx friend-link --revoke <link-id>`}</Code>
@@ -37,9 +39,11 @@ envx friend-link --revoke <link-id>`}</Code>
       <section className="space-y-4">
         <H2 id="verify">2. Keep identities pinned</H2>
         <P>
-          Aliases and fingerprint pins are local to your account and machine. If
-          a key changes or you use a new device, verify the full fingerprint
-          with your friend through a trusted channel before accepting it:
+          Aliases and fingerprint pins are local to your account and machine. To
+          confirm the person behind a key, compare full fingerprints through a
+          trusted channel before sending sensitive content, including on your
+          first connection. If a key changes or you use a new device, verify the
+          full fingerprint before accepting it:
         </P>
         <Code>{`envx friends --accept-key <friend-uuid> --fingerprint <verified-full-fingerprint>
 envx friends --rename <friend-uuid-or-alias> --alias sam`}</Code>

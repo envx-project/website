@@ -20,7 +20,7 @@ export function Nav() {
           <Logo className="h-5 w-5" />
           <span>envx</span>
           <span className="text-muted-foreground">/</span>
-          <span className="font-normal text-muted-foreground">v2.13.0</span>
+          <span className="font-normal text-muted-foreground">v2.14.0</span>
         </Link>
 
         <nav className="hidden items-center gap-1 sm:flex">
