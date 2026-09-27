@@ -9,6 +9,7 @@ const SECTIONS = [
       { to: "/docs/cli-reference", label: "CLI reference" },
       { to: "/docs/sharing", label: "Friends and messages" },
       { to: "/docs/local-state", label: "Local state and upgrades" },
+      { to: "/docs/windows", label: "Windows" },
     ],
   },
   {

@@ -19,14 +19,8 @@ envx --version`}</Code>
         <P>
           This installs per user without administrator rights and adds envx to
           your <code>PATH</code>; open a new terminal afterwards. See the{" "}
-          <a
-            href="https://github.com/envx-project/cli/blob/main/windows-installation.md"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Windows installation guide
-          </a>{" "}
-          for options and manual installation.
+          <a href="/docs/windows">Windows guide</a> for options and manual
+          installation.
         </P>
         <Callout variant="info" title="Upgrading an existing profile?">
           Keep using your current key and commands. Local operational state
