@@ -14,24 +14,19 @@ function Quickstart() {
         <P>On macOS, Linux, or WSL:</P>
         <Code>{`curl -fsSL https://get.envx.sh | bash
 envx --version`}</Code>
+        <P>On Windows, in PowerShell or Command Prompt:</P>
+        <Code>{`powershell -c "irm https://raw.githubusercontent.com/envx-project/cli/main/install.ps1 | iex"`}</Code>
         <P>
-          On Windows, download the appropriate binary from{" "}
-          <a
-            href="https://github.com/envx-project/cli/releases/latest"
-            target="_blank"
-            rel="noreferrer"
-          >
-            GitHub releases
-          </a>{" "}
-          and follow the{" "}
+          This installs per user without administrator rights and adds envx to
+          your <code>PATH</code>; open a new terminal afterwards. See the{" "}
           <a
             href="https://github.com/envx-project/cli/blob/main/windows-installation.md"
             target="_blank"
             rel="noreferrer"
           >
             Windows installation guide
-          </a>
-          .
+          </a>{" "}
+          for options and manual installation.
         </P>
         <Callout variant="info" title="Upgrading an existing profile?">
           Keep using your current key and commands. Local operational state

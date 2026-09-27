@@ -17,7 +17,7 @@ const TABS = [
   {
     id: "windows",
     label: "Windows",
-    cmd: "# download from GitHub releases\nstart https://github.com/envx-project/cli/releases/latest",
+    cmd: 'powershell -c "irm https://raw.githubusercontent.com/envx-project/cli/main/install.ps1 | iex"',
   },
 ] as const;
 
